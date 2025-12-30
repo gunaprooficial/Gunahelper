@@ -1,169 +1,115 @@
--- GUNA HELPER | INTRO + GUI FINAL
+-- 🔒 ANTI EXECUTAR 2x
+if getgenv().GUNA_HELPER_LOADED then
+	warn("GUNA HELPER já foi executado!")
+	return
+end
+getgenv().GUNA_HELPER_LOADED = true
 
+-- SERVICES
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
-local TweenService = game:GetService("TweenService")
+local Lighting = game:GetService("Lighting")
 
 local player = Players.LocalPlayer
 
-------------------------------------------------
--- SCREEN GUI
-------------------------------------------------
-local ScreenGui = Instance.new("ScreenGui")
+-- GUI
+local ScreenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 ScreenGui.Name = "GunaHelper"
 ScreenGui.ResetOnSpawn = false
-ScreenGui.Parent = player:WaitForChild("PlayerGui")
 
-------------------------------------------------
--- INTRO
-------------------------------------------------
+---------------------------------------------------
+-- 🌫️ INTRO BLUR
+---------------------------------------------------
+local Blur = Instance.new("BlurEffect", Lighting)
+Blur.Size = 0
+
 local Intro = Instance.new("Frame", ScreenGui)
 Intro.Size = UDim2.new(1,0,1,0)
-Intro.BackgroundColor3 = Color3.fromRGB(5,5,5)
 Intro.BackgroundTransparency = 1
-
-local IntroCorner = Instance.new("UICorner", Intro)
-IntroCorner.CornerRadius = UDim.new(0,20)
-
-local IntroStroke = Instance.new("UIStroke", Intro)
-IntroStroke.Thickness = 4
-IntroStroke.Transparency = 1
 
 local IntroText = Instance.new("TextLabel", Intro)
 IntroText.Size = UDim2.new(1,0,1,0)
 IntroText.BackgroundTransparency = 1
-IntroText.Text = "script by: gunaprooficial99"
-IntroText.Font = Enum.Font.GothamMedium
-IntroText.TextSize = 32
+IntroText.Text = "script by:\ngunaprooficial99"
+IntroText.Font = Enum.Font.GothamBold
+IntroText.TextSize = 42
 IntroText.TextTransparency = 1
+IntroText.TextStrokeTransparency = 0.6
 
 task.spawn(function()
 	local h = 0
 	while Intro.Parent do
 		h = (h + 1) % 360
-		local c = Color3.fromHSV(h/360,1,1)
-		IntroText.TextColor3 = c
-		IntroStroke.Color = c
+		IntroText.TextColor3 = Color3.fromHSV(h/360,1,1)
 		task.wait(0.03)
 	end
 end)
 
-TweenService:Create(Intro, TweenInfo.new(0.8), {BackgroundTransparency = 0}):Play()
-TweenService:Create(IntroText, TweenInfo.new(0.8), {TextTransparency = 0}):Play()
-TweenService:Create(IntroStroke, TweenInfo.new(0.8), {Transparency = 0}):Play()
-
+TweenService:Create(Blur, TweenInfo.new(0.6), {Size = 24}):Play()
+TweenService:Create(IntroText, TweenInfo.new(0.6), {TextTransparency = 0}):Play()
 task.wait(2)
-
-TweenService:Create(Intro, TweenInfo.new(0.8), {BackgroundTransparency = 1}):Play()
-TweenService:Create(IntroText, TweenInfo.new(0.8), {TextTransparency = 1}):Play()
-TweenService:Create(IntroStroke, TweenInfo.new(0.8), {Transparency = 1}):Play()
-
-task.wait(0.9)
+TweenService:Create(IntroText, TweenInfo.new(0.6), {TextTransparency = 1}):Play()
+TweenService:Create(Blur, TweenInfo.new(0.6), {Size = 0}):Play()
+task.wait(0.7)
 Intro:Destroy()
+Blur:Destroy()
 
-------------------------------------------------
--- MAIN GUI
-------------------------------------------------
+---------------------------------------------------
+-- 🟣 MAIN GUI
+---------------------------------------------------
 local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0,0,0,0)
+Main.Size = UDim2.new(0,420,0,260)
 Main.Position = UDim2.new(0.5,-210,0.5,-130)
 Main.BackgroundColor3 = Color3.fromRGB(10,10,10)
-Main.BorderSizePixel = 0
 Main.BackgroundTransparency = 1
-Main.Parent = ScreenGui
-
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0,16)
+
+TweenService:Create(Main, TweenInfo.new(0.6, Enum.EasingStyle.Back), {
+	BackgroundTransparency = 0
+}):Play()
 
 local Stroke = Instance.new("UIStroke", Main)
 Stroke.Thickness = 3
-Stroke.Transparency = 1
 
-local Gradient = Instance.new("UIGradient", Main)
-Gradient.Color = ColorSequence.new{
-	ColorSequenceKeypoint.new(0, Color3.fromRGB(120,0,255)),
-	ColorSequenceKeypoint.new(1, Color3.fromRGB(0,255,255))
-}
+task.spawn(function()
+	local h = 0
+	while Main.Parent do
+		h = (h + 1) % 360
+		Stroke.Color = Color3.fromHSV(h/360,1,1)
+		task.wait(0.03)
+	end
+end)
 
-TweenService:Create(Main, TweenInfo.new(0.5, Enum.EasingStyle.Back), {
-	Size = UDim2.new(0,420,0,260),
-	BackgroundTransparency = 0
-}):Play()
-TweenService:Create(Stroke, TweenInfo.new(0.5), {Transparency = 0}):Play()
-
-------------------------------------------------
--- TITLE
-------------------------------------------------
 local Title = Instance.new("TextLabel", Main)
 Title.Size = UDim2.new(1,0,0,50)
 Title.BackgroundTransparency = 1
 Title.Text = "GUNA HELPER"
-Title.Font = Enum.Font.GothamMedium
-Title.TextSize = 28
-Title.TextStrokeTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 30
 
-------------------------------------------------
--- MINIMIZE
-------------------------------------------------
-local Minimize = Instance.new("TextButton", Main)
-Minimize.Size = UDim2.new(0,40,0,40)
-Minimize.Position = UDim2.new(1,-45,0,5)
-Minimize.Text = "-"
-Minimize.Font = Enum.Font.GothamMedium
-Minimize.TextSize = 26
-Minimize.BackgroundTransparency = 1
-Minimize.TextColor3 = Color3.new(1,1,1)
-
-------------------------------------------------
--- ICON
-------------------------------------------------
-local Icon = Instance.new("ImageButton", ScreenGui)
-Icon.Size = UDim2.new(0,70,0,70)
-Icon.Position = UDim2.new(0,20,0.5,-35)
-Icon.Image = "rbxassetid://138131777234445"
-Icon.BackgroundTransparency = 1
-Icon.Visible = false
-Icon.AutoButtonColor = false
-Instance.new("UICorner", Icon).CornerRadius = UDim.new(1,0)
-
-local IconStroke = Instance.new("UIStroke", Icon)
-IconStroke.Thickness = 2
-
-------------------------------------------------
--- RGB LOOP
-------------------------------------------------
 task.spawn(function()
 	local h = 0
-	while true do
+	while Title.Parent do
 		h = (h + 1) % 360
-		local c = Color3.fromHSV(h/360,1,1)
-		Title.TextColor3 = c
-		Stroke.Color = c
-		IconStroke.Color = c
+		Title.TextColor3 = Color3.fromHSV(h/360,1,1)
 		task.wait(0.03)
 	end
 end)
 
-task.spawn(function()
-	while true do
-		Gradient.Rotation += 1
-		task.wait(0.02)
-	end
-end)
-
-------------------------------------------------
--- BUTTON CREATOR
-------------------------------------------------
+---------------------------------------------------
+-- 🔘 BOTÕES
+---------------------------------------------------
 local function CreateButton(text, y, red)
 	local b = Instance.new("TextButton", Main)
 	b.Size = UDim2.new(0.8,0,0,45)
 	b.Position = UDim2.new(0.1,0,0,y)
 	b.Text = text
 	b.Font = Enum.Font.Gotham
-	b.TextSize = 15
-	b.TextStrokeTransparency = 1
+	b.TextSize = 18
 	b.BackgroundColor3 = Color3.fromRGB(20,20,20)
-	b.TextColor3 = Color3.fromRGB(230,230,230)
+	b.TextColor3 = Color3.new(1,1,1)
 	b.AutoButtonColor = false
 	Instance.new("UICorner", b).CornerRadius = UDim.new(0,12)
 
@@ -172,9 +118,9 @@ local function CreateButton(text, y, red)
 
 	task.spawn(function()
 		local h = 0
-		while true do
+		while b.Parent do
 			if red then
-				s.Color = Color3.fromRGB(255, math.sin(tick()*3)*80+120, math.sin(tick()*3)*80+120)
+				s.Color = Color3.fromRGB(255, math.sin(tick()*3)*127+128, math.sin(tick()*3)*127+128)
 			else
 				h = (h + 1) % 360
 				s.Color = Color3.fromHSV(h/360,1,1)
@@ -186,16 +132,10 @@ local function CreateButton(text, y, red)
 	return b
 end
 
-------------------------------------------------
--- BUTTONS
-------------------------------------------------
 local Miranda = CreateButton("Miranda Hub", 70, true)
 local AutoSteal = CreateButton("Auto Steal (No Cooldown)", 125, false)
 local POV = CreateButton("POV", 180, false)
 
-------------------------------------------------
--- ACTIONS
-------------------------------------------------
 Miranda.MouseButton1Click:Connect(function()
 	loadstring(game:HttpGet("https://pastefy.app/JJVhs3rK/raw"))()
 end)
@@ -205,79 +145,46 @@ AutoSteal.MouseButton1Click:Connect(function()
 end)
 
 POV.MouseButton1Click:Connect(function()
-	local cam = workspace.CurrentCamera
 	RunService.RenderStepped:Connect(function()
-		if cam then cam.FieldOfView = 120 end
+		workspace.CurrentCamera.FieldOfView = 120
 	end)
 end)
 
-------------------------------------------------
--- DRAG MAIN
-------------------------------------------------
-local dragging, dragStart, startPos
+---------------------------------------------------
+-- 🔵 ÍCONE REDONDO COM IMAGEM
+---------------------------------------------------
+local Icon = Instance.new("ImageButton", ScreenGui)
+Icon.Size = UDim2.new(0,70,0,70)
+Icon.Position = UDim2.new(0,20,0.5,-35)
+Icon.Image = "rbxassetid://85064207194102"
+Icon.BackgroundColor3 = Color3.fromRGB(15,15,15)
+Icon.Visible = false
+Icon.AutoButtonColor = false
+Instance.new("UICorner", Icon).CornerRadius = UDim.new(1,0)
+
+local IconStroke = Instance.new("UIStroke", Icon)
+IconStroke.Thickness = 2
+
+task.spawn(function()
+	local h = 0
+	while Icon.Parent do
+		h = (h + 1) % 360
+		IconStroke.Color = Color3.fromHSV(h/360,1,1)
+		task.wait(0.03)
+	end
+end)
+
+---------------------------------------------------
+-- 📦 MINIMIZAR / RESTAURAR
+---------------------------------------------------
 Main.InputBegan:Connect(function(i)
 	if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-		dragging = true
-		dragStart = i.Position
-		startPos = Main.Position
+		Main.Visible = false
+		Icon.Visible = true
 	end
-end)
-
-UserInputService.InputChanged:Connect(function(i)
-	if dragging and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-		local delta = i.Position - dragStart
-		Main.Position = UDim2.new(startPos.X.Scale,startPos.X.Offset+delta.X,startPos.Y.Scale,startPos.Y.Offset+delta.Y)
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(i)
-	if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-		dragging = false
-	end
-end)
-
-------------------------------------------------
--- DRAG ICON
-------------------------------------------------
-local idrag, istart, ipos
-Icon.InputBegan:Connect(function(i)
-	if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-		idrag = true
-		istart = i.Position
-		ipos = Icon.Position
-	end
-end)
-
-UserInputService.InputChanged:Connect(function(i)
-	if idrag and (i.UserInputType == Enum.UserInputType.MouseMovement or i.UserInputType == Enum.UserInputType.Touch) then
-		local d = i.Position - istart
-		Icon.Position = UDim2.new(ipos.X.Scale,ipos.X.Offset+d.X,ipos.Y.Scale,ipos.Y.Offset+d.Y)
-	end
-end)
-
-UserInputService.InputEnded:Connect(function(i)
-	if i.UserInputType == Enum.UserInputType.MouseButton1 or i.UserInputType == Enum.UserInputType.Touch then
-		idrag = false
-	end
-end)
-
-------------------------------------------------
--- MINIMIZE / RESTORE
-------------------------------------------------
-Minimize.MouseButton1Click:Connect(function()
-	TweenService:Create(Main, TweenInfo.new(0.3), {
-		Size = UDim2.new(0,0,0,0),
-		BackgroundTransparency = 1
-	}):Play()
-	task.wait(0.3)
-	Main.Visible = false
-	Icon.Visible = true
 end)
 
 Icon.MouseButton1Click:Connect(function()
 	Main.Visible = true
-	TweenService:Create(Main, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-		Size = UDim2.new(0,420,0,260),
-		BackgroundTransparency = 0
-	}):Play()
+	Icon.Visible = false
 end)
